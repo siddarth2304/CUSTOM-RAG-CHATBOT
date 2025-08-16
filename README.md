@@ -1,133 +1,93 @@
 
----
 
 ````markdown
 # InsightBot — Custom RAG Chatbot
 
-[![Python](https://img.shields.io/badge/Python-3.10-blue)](https://www.python.org/)
-[![FAISS](https://img.shields.io/badge/FAISS-VectorSearch-orange)](https://github.com/facebookresearch/faiss)
-[![Gemini](https://img.shields.io/badge/Gemini-GPT5-red)](https://developers.generativeai.google/)
-
-**A high-performance Retrieval-Augmented Generation (RAG) chatbot built from scratch using Python and Gemini API, designed to answer questions from uploaded documents (PDF/DOCX) with full control over embeddings, retrieval, and generation.**
+A high-performance Retrieval-Augmented Generation (RAG) chatbot built from scratch using Python and the Gemini API.  
+It answers questions from uploaded documents (PDF/DOCX) with full control over embeddings, retrieval, and generation.
 
 ---
 
-## 🚀 Project Overview
+## Project Overview
 
-InsightBot is a **custom-built RAG chatbot** that demonstrates **deep understanding of retrieval, embedding, and generation pipelines**. Unlike off-the-shelf solutions like LangChain, this project emphasizes **low-level control and enterprise-grade architecture**, allowing:
+InsightBot demonstrates a low-level understanding of RAG internals.  
+Unlike high-level frameworks such as LangChain, this project emphasizes:
 
-- Direct management of document ingestion, chunking, and embedding
-- Custom FAISS vector indexing
-- Dynamic query retrieval and generation
-- Full GPU acceleration for embeddings and LLM inference
-
----
-
-## 📂 Features
-
-- Upload multiple PDFs/DOCX and automatically generate embeddings  
-- Chunk documents with configurable size and overlap  
-- FAISS-based vector search for high-speed retrieval  
-- Gemini-powered generation (GPT-5) for coherent, contextual answers  
-- Multi-document retrieval and query handling  
+- Direct control over document ingestion, chunking, and embedding  
+- FAISS vector indexing for fast retrieval  
 - GPU acceleration for embeddings and LLM inference  
-- Easy-to-adapt Flask API for web deployment  
+- Gemini API (GPT-5) integration for generation  
+
+This showcases the ability to build enterprise-grade AI systems from scratch.
 
 ---
 
-## ⚙️ Technical Stack
+## Features
 
-| Layer | Technology |
-|-------|------------|
-| Document Ingestion & Parsing | PyMuPDF, python-docx |
-| Chunking | Custom text chunker with overlap control |
-| Embeddings | Custom embeddings pipeline with GPU support |
-| Vector Database | FAISS (local vector store) |
-| LLM Generation | Gemini API (GPT-5) |
-| Backend API | Python, Flask |
-| Deployment | Vercel / Render / Fly.io (planned) |
+- Upload multiple PDF/DOCX files and generate embeddings automatically  
+- Configurable chunking with overlap control  
+- FAISS-based vector search for fast and relevant retrieval  
+- Gemini-powered generation for contextual answers  
+- Multi-document retrieval support  
+- GPU acceleration for embeddings and inference  
+- Ready for Flask-based web deployment  
 
 ---
 
-## 🧠 Low-Level Insights
+## Technical Stack
 
-- **Custom Chunking & Embeddings:** Fine-grained control over chunk size, overlap, and embedding dimensionality ensures **optimal retrieval performance**.  
-- **FAISS Index Management:** Direct control over index creation, updating, and querying ensures **fast vector search** without hidden layers.  
-- **Generator Integration:** Direct Gemini API calls allow **full control of prompts and LLM parameters**.  
-- **GPU Optimization:** Low-latency processing for large documents, fully leveraging CUDA.  
-
----
-
-## 🔍 LangChain vs Custom RAG (InsightBot)
-
-| Feature | LangChain | InsightBot (Custom) |
-|---------|-----------|-------------------|
-| Abstraction Level | High-level | Low-level, full control |
-| Vector Store | Supports multiple backends | Direct FAISS control |
-| LLM Integration | Standardized wrappers | Direct Gemini API calls |
-| Chunking | Predefined utilities | Custom chunking logic, configurable |
-| Deployment | Flexible, may need wrappers | Full Flask API for live uploads |
-| Optimization | Limited to defaults | GPU acceleration and manual tuning |
-| Debugging | Abstracted | Fully transparent pipeline |
-
-**Takeaway:** InsightBot demonstrates **hands-on expertise** in building RAG from scratch and optimizing every component for performance and control.
+| Layer                       | Technology                     |
+|-----------------------------|--------------------------------|
+| Document Ingestion & Parsing | PyMuPDF, python-docx           |
+| Chunking                    | Custom text chunker (overlap control) |
+| Embeddings                  | Custom GPU-accelerated pipeline |
+| Vector Database             | FAISS                          |
+| LLM Generation              | Gemini API (GPT-5)             |
+| Backend API                 | Python, Flask                  |
+| Deployment                  | Vercel / Render / Fly.io (planned) |
 
 ---
 
-## 📄 Example Usage
+## Low-Level Insights
+
+- Custom Chunking & Embeddings → Fine-grained control over chunk size, overlap, and embedding dimensionality ensures optimal retrieval performance.  
+- FAISS Index Management → Direct control of index creation, updating, and querying enables fast and accurate vector search.  
+- Gemini API Integration → Direct calls provide full control of prompts and parameters.  
+- GPU Optimization → Enables low-latency processing for large documents using CUDA.
+
+---
+
+## LangChain vs Custom RAG (InsightBot)
+
+| Feature             | LangChain (High-level) | InsightBot (Custom, Low-level) |
+|----------------------|-------------------------|--------------------------------|
+| Abstraction Level    | High                   | Low, full control              |
+| Vector Store         | Multiple backends      | Direct FAISS control           |
+| LLM Integration      | Wrappers               | Direct Gemini API calls        |
+| Chunking             | Predefined utilities   | Custom, configurable logic     |
+| Deployment           | Flexible (abstracted)  | Flask API for live uploads     |
+| Optimization         | Defaults only          | Manual GPU optimization        |
+| Debugging            | Abstracted             | Transparent pipeline           |
+
+**Takeaway:** InsightBot highlights hands-on expertise in building RAG from scratch and optimizing every component.
+
+---
+
+## Example Usage
 
 ```bash
-# Generate embeddings from documents
+# Step 1: Generate embeddings from documents
 PYTHONPATH=. python backend/embeddings/embedder.py
 
-# Query the RAG chatbot
+# Step 2: Query the RAG chatbot
 PYTHONPATH=. python rag_query.py
 ````
 
-**Sample Query:**
+---
 
-```
-Enter your question: What projects have I worked on?
---- Retrieved Chunks ---
-Chunk 1: Sahith Siddarth Earlapally, Resume, Technical Skills...
-Chunk 2: Distributed Task Queue, Concurrent TCP Server...
-Chunk 3: Optimized RAG Chatbot with Vector Search...
---- Generated Answer ---
-You have worked on the following projects:
-* Concurrent TCP Server from Scratch
-* Distributed Task Queue System
-* Optimized RAG Chatbot with Vector Search
-```
+With InsightBot, you get full transparency, low-level control, and enterprise-grade performance in your RAG pipeline.
 
 ---
 
-## 📈 Key Takeaways 
-
-* Demonstrates **low-level RAG knowledge** and vector search expertise
-* Shows **custom pipeline building from scratch**, not relying on pre-built frameworks
-* Ability to **debug, optimize, and deploy enterprise-grade AI systems**
-* Exposure to **real-world problem-solving**, multi-document retrieval, and GPU optimization
-
----
-
-## 📌 Next Steps (Planned)
-
-* Web interface for **live PDF/DOCX uploads**
-* Real-time query answering with **chunk highlighting** and file references
-* Dynamic **FAISS updating** with uploaded documents
-* Deployment on **Vercel / Render / Fly.io** with GPU support
-
----
-
-## 🖼️ Project Flow Diagram
 
 ```
-[User Uploads PDF/DOCX] --> [Parser & Chunker] --> [Embeddings + FAISS Index] --> [Retriever] --> [Gemini Generator] --> [Answer]
-```
-
----
-
-**Made with ❤️ by Sahith Siddarth**
-[LinkedIn](https://linkedin.com/in/earlapally-sahith-siddarth/) | [Portfolio](https://sahithsiddarth.vercel.app/) | [GitHub](https://github.com/siddarth2304)
-
-
