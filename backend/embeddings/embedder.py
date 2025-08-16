@@ -1,51 +1,68 @@
-from sentence_transformers import SentenceTransformer
-import faiss
-import numpy as np
+# backend/embeddings/embedder.py
 import os
 import pickle
+import faiss
+from sentence_transformers import SentenceTransformer
+from backend.ingestion.chunker import chunk_text
+from backend.ingestion.parser import load_documents
 
-# Load the model (GPU will be used automatically if available)
-model = SentenceTransformer('all-MiniLM-L6-v2')
+# -----------------------------
+# Settings
+# -----------------------------
+EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+DEVICE = "cuda" if True else "cpu"
+DATA_DIR = "data"
+INDEX_FILE = "faiss_index.index"
+METADATA_FILE = "metadata.pkl"
 
-def embed_text(texts):
-    return model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
+# -----------------------------
+# Initialize embedding model
+# -----------------------------
+embed_model = SentenceTransformer(EMBEDDING_MODEL, device=DEVICE)
 
-def create_faiss_index(embeddings):
-    dim = embeddings.shape[1]
-    index = faiss.IndexFlatL2(dim)
-    index.add(embeddings)
-    return index
+# -----------------------------
+# Load all documents
+# -----------------------------
+documents = load_documents(DATA_DIR)
+print(f"📥 Loaded {len(documents)} documents from {DATA_DIR}")
 
-def save_index(index, filepath="faiss_index.index"):
-    faiss.write_index(index, filepath)
+# -----------------------------
+# Chunk and prepare metadata
+# -----------------------------
+all_chunks = []
+for doc in documents:
+    chunks = chunk_text(doc["text"])
+    for i, chunk in enumerate(chunks):
+        all_chunks.append({
+            "text": chunk,            # ✅ actual chunk content
+            "filename": doc["filename"],
+            "chunk_id": f"{doc['filename']}_chunk_{i}"
+        })
 
-def save_metadata(metadata, filepath="metadata.pkl"):
-    with open(filepath, "wb") as f:
-        pickle.dump(metadata, f)
+print(f"📄 Total chunks created: {len(all_chunks)}")
 
-# Integration test
-if __name__ == "__main__":
-    from backend.ingestion.parser import load_documents
-    from backend.ingestion.chunker import chunk_documents
+# -----------------------------
+# Create embeddings
+# -----------------------------
+texts = [c["text"] for c in all_chunks]
+print("🧠 Generating embeddings...")
+embeddings = embed_model.encode(texts, convert_to_numpy=True, show_progress_bar=True)
 
-    print("📥 Loading documents...")
-    docs = load_documents("data")
+# -----------------------------
+# Build FAISS index
+# -----------------------------
+dim = embeddings.shape[1]
+index = faiss.IndexFlatL2(dim)
+index.add(embeddings)
 
-    print("✂️ Chunking...")
-    chunks = chunk_documents(docs, max_tokens=200)
+# -----------------------------
+# Save FAISS index and metadata
+# -----------------------------
+faiss.write_index(index, INDEX_FILE)
+with open(METADATA_FILE, "wb") as f:
+    pickle.dump(all_chunks, f)
 
-    texts = [c["text"] for c in chunks]
-    metadata = [{k: c[k] for k in ["filename", "chunk_id"]} for c in chunks]
+print(f"✅ FAISS index created with {index.ntotal} vectors")
+print(f"💾 Metadata saved to {METADATA_FILE}")
+print("🎉 All done. Ready for RAG retrieval!")
 
-    print("🧠 Embedding texts...")
-    embeddings = embed_text(texts)
-    print(f"✅ Generated {len(embeddings)} embeddings of dim {embeddings.shape[1]}")
-
-    print("📦 Creating FAISS index...")
-    index = create_faiss_index(embeddings)
-
-    print("💾 Saving index and metadata...")
-    save_index(index)
-    save_metadata(metadata)
-
-    print("🎉 All done. You’re ready for retrieval.")
